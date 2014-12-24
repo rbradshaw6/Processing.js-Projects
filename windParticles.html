@@ -1,0 +1,102 @@
+<script src="processing.min.js"></script>
+<script type="text/processing" data-processing-target="processing-canvas">
+ArrayList particles = new ArrayList();
+
+
+final color START_COLOR_TOP    = #FFCC99;
+final color START_COLOR_BOTTOM = #FF6699;
+final color END_COLOR_TOP      = #FFCC99;
+final color END_COLOR_BOTTOM   = #FF6699;
+ 
+final int MAX_FRAME_NB = 200;
+ 
+color InterpolateColor(color startC, color endC)
+{
+  return lerpColor(startC, endC, (float) (frameCount % MAX_FRAME_NB) / (float) MAX_FRAME_NB);
+}
+ 
+void DrawBackground()
+{
+  color topColor = InterpolateColor(START_COLOR_TOP, END_COLOR_TOP);
+  color bottomColor = InterpolateColor(START_COLOR_BOTTOM, END_COLOR_BOTTOM);
+  for (int l = 0; l < height; l++)
+  {
+    color sc = lerpColor(topColor, bottomColor, (float) l / (float) height);
+    stroke(sc);
+    line(0, l, width - 1, l);
+  }
+}
+ 
+void setup() {
+  size(1550, 750);
+  frameRate(30);
+}
+ 
+void draw() {
+  DrawBackground();
+  
+  if(mousePressed) {
+	particles.add(new Particle(mouseX, mouseY));
+	}	
+
+
+	for(int i = 0; i < particles.size(); i++){
+		Particle p = (Particle)particles.get(i);
+		p.update();
+		p.draw();
+	}
+    
+   
+
+  
+}
+
+class Particle {
+
+	float x, y;
+	float xV, yV;
+	float gravity, life;
+
+	Particle(float initX, float initY){
+
+	x = initX;
+	y = initY;
+	life = 20;
+	gravity = 1;
+	
+
+	xV  = random(-5,5);
+	yV = random(-10,10);
+	
+	}
+
+	void update(){
+		yV += gravity;
+		x += xV;
+		y += yV;
+        
+        for(int g = 0; g < particles.size();g++){
+        
+            x += 1;
+            
+            if(x > 1550){
+                
+                x = 0;
+            
+            }
+        
+        }
+        
+	
+		}
+
+	void draw(){
+
+			
+		ellipse(x,y,20,20);	
+		}
+}
+
+
+</script>
+<canvas id="processing-canvas"> </canvas>
